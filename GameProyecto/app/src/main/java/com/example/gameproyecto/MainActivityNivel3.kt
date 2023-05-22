@@ -12,8 +12,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 
-class MainActivityNivel2 : AppCompatActivity() {
-    private lateinit var myToolbar : Toolbar
+class MainActivityNivel3 : AppCompatActivity() { private lateinit var myToolbar : Toolbar
     private lateinit var mp : MediaPlayer
     private lateinit var mpGreat : MediaPlayer
     private lateinit var mpBad : MediaPlayer
@@ -37,9 +36,9 @@ class MainActivityNivel2 : AppCompatActivity() {
     val numeros = arrayOf("cero", "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main_nivel2)
+        setContentView(R.layout.activity_main_nivel3)
 
-        Toast.makeText(this, "Nivel 2 - Sumas Intermedio", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Nivel 3 - Restas", Toast.LENGTH_SHORT).show()
 
         tv_score = findViewById(R.id.tv_score)
         tv_nombre = findViewById(R.id.tv_nombre)
@@ -64,7 +63,7 @@ class MainActivityNivel2 : AppCompatActivity() {
             1 -> iv_Vidas.setImageResource(R.drawable.unavida)
         }
 
-        val myToolbar: Toolbar = findViewById(R.id.toolbarNivel2)
+        val myToolbar: Toolbar = findViewById(R.id.toolbarNivel3)
         setSupportActionBar(myToolbar)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setIcon(R.mipmap.ic_launcher)
@@ -143,68 +142,72 @@ class MainActivityNivel2 : AppCompatActivity() {
 
 
     fun numeroAleatorio() {
-        if (score <= 19) {
+        if (score <= 29) {
             numAleatorio_Uno = (0..9).random()
             numAleatorio_Dos = (0..9).random()
 
-            result = numAleatorio_Uno + numAleatorio_Dos
+            result = numAleatorio_Uno - numAleatorio_Dos
 
-            for (i in 0 until numeros.size) {
-                val id = resources.getIdentifier(numeros[i], "drawable", packageName)
-                if (numAleatorio_Uno == i) {
-                    ivAuno.setImageResource(id)
-                }
-                if (numAleatorio_Dos == i) {
-                    ivAdos.setImageResource(id)
+            if (result >= 0) {
+                for (i in 0 until numeros.length) {
+                    val id = resources.getIdentifier(numeros[i], "drawable", packageName)
+                    if (numAleatorio_Uno == i) {
+                        ivAuno.setImageResource(id)
+                    }
+                    if (numAleatorio_Dos == i) {
+                        ivAdos.setImageResource(id)
+                    }
                 }
             }
         } else {
-                val intent = Intent(this, MainActivityNivel3::class.java)
-                string_Vcore = score.toString()
-                string_Vidas = vidas.toString()
+            numeroAleatorio()
+        }
+            val intent = Intent(this, MainActivityNivel4::class.java)
+            string_Vcore = score.toString()
+            string_Vidas = vidas.toString()
 
 
-                intent.putExtra("Jugador", nombre_Jugador)
-                intent.putExtra("score", string_Vcore)
-                intent.putExtra("vidas", string_Vidas)
+            intent.putExtra("Jugador", nombre_Jugador)
+            intent.putExtra("score", string_Vcore)
+            intent.putExtra("vidas", string_Vidas)
 
 
 
-                mp.stop()
-                mp.release()
-                startActivity(intent)
-                finish()
+            mp.stop()
+            mp.release()
+            startActivity(intent)
+            finish()
 
         }
     }
 
-    fun baseDeDatos() {
-        val admin = AdminnSALiteOpenHelper(this, "BD", null, 1)
-        val BD = admin.writableDatabase
+fun baseDeDatos() {
+    val admin = AdminnSALiteOpenHelper(this, "BD", null, 1)
+    val BD = admin.writableDatabase
 
-        val consulta = BD.rawQuery("select * " +
-                "from puntaje " +
-                "where score = " +
-                "(select max(score) " +
-                "from puntaje)", null)
-        if (consulta.moveToFirst()) {
-            val temp_Nombre = consulta.getString(0)
-            val temp_Score = consulta.getString(1)
+    val consulta = BD.rawQuery("select * " +
+            "from puntaje " +
+            "where score = " +
+            "(select max(score) " +
+            "from puntaje)", null)
+    if (consulta.moveToFirst()) {
+        val temp_Nombre = consulta.getString(0)
+        val temp_Score = consulta.getString(1)
 
-            val bestScore = temp_Score.toInt()
+        val bestScore = temp_Score.toInt()
 
-            if (score > bestScore) {
-                val modificacion = ContentValues()
-                modificacion.put("nombre", nombre_Jugador)
-                modificacion.put("score", score)
-                BD.update("puntaje", modificacion, "score=$bestScore", null)
-            }
-        } else {
-            val insertar = ContentValues()
-            insertar.put("nombre", nombre_Jugador)
-            insertar.put("score", score)
-            BD.insert("puntaje", null, insertar)
+        if (score > bestScore) {
+            val modificacion = ContentValues()
+            modificacion.put("nombre", nombre_Jugador)
+            modificacion.put("score", score)
+            BD.update("puntaje", modificacion, "score=$bestScore", null)
         }
-        BD.close()
+    } else {
+        val insertar = ContentValues()
+        insertar.put("nombre", nombre_Jugador)
+        insertar.put("score", score)
+        BD.insert("puntaje", null, insertar)
     }
+    BD.close()
+}
 }

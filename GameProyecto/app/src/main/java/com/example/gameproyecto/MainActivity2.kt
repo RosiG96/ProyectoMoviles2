@@ -1,6 +1,8 @@
 package com.example.gameproyecto
 
+import android.content.ContentValues
 import android.content.Intent
+import android.database.sqlite.SQLiteDatabase
 import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -112,8 +114,9 @@ class MainActivity2 : AppCompatActivity() {
                         finish()
                     }
                 }
-                //Base de Datos
+                baseDeDatos();
                 et_Respuesta.setText("")
+                numeroAleatorio();
 
             }
 
@@ -162,4 +165,34 @@ class MainActivity2 : AppCompatActivity() {
             }
         }
     }
+    fun baseDeDatos() {
+        val admin = AdminnSALiteOpenHelper(this, "BD", null, 1)
+        val BD = admin.writableDatabase
+
+        val consulta = BD.rawQuery("select * " +
+                "from puntaje " +
+                "where score = " +
+                "(select max(score) " +
+                "from puntaje)", null)
+        if (consulta.moveToFirst()) {
+            val temp_Nombre = consulta.getString(0)
+            val temp_Score = consulta.getString(1)
+
+            val bestScore = temp_Score.toInt()
+
+            if (score > bestScore) {
+                val modificacion = ContentValues()
+                modificacion.put("nombre", nombre_Jugador)
+                modificacion.put("score", score)
+                BD.update("puntaje", modificacion, "score=$bestScore", null)
+            }
+        } else {
+            val insertar = ContentValues()
+            insertar.put("nombre", nombre_Jugador)
+            insertar.put("score", score)
+            BD.insert("puntaje", null, insertar)
+        }
+        BD.close()
+    }
+
 }

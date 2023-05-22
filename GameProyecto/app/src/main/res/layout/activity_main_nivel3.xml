@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/wallpaperprincipal"
-    tools:context=".MainActivityNivel2">
+    tools:context=".MainActivityNivel3">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbarNivel2"
+        android:id="@+id/toolbarNivel3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/color_primary"
@@ -95,7 +95,7 @@
         android:layout_marginTop="300dp"
         app:layout_constraintStart_toEndOf="@+id/NumeroUno"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/adicion" />
+        app:srcCompat="@drawable/resta" />
 
     <EditText
         android:id="@+id/et_resultado"
